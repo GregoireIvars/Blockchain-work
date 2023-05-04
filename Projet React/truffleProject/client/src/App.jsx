@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ActeDeDeces from "./component/ActeDeDeces"
-import Counter from "./component/Counter"
+import ActeDeNaissances from "./component/ActeDeNaissances";
 function App() {
 
   return (
