@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Web3 from "web3";
 import ActeDeDecesContract from "../contracts/ActeDeDeces.json"
-
+import "../css/index.css"
 function ActeDeDeces() {
   const [web3, setWeb3] = useState(null);
   const [accounts, setAccounts] = useState([]);
@@ -10,6 +10,7 @@ function ActeDeDeces() {
   const [nom, setNom] = useState("");
   const [prenom, setPrenom] = useState("");
   const [dateDeces, setDateDeces] = useState("");
+  const [hashActe, setHashActe] = useState("");
   const [nombreActes, setNombreActes] = useState(1);
   const [actes, setActes] = useState([]);
 
@@ -47,26 +48,24 @@ function ActeDeDeces() {
     init();
   }, []);
 
-  async function ajouterActe(nom, prenom, dateDeces) {
+  async function ajouterActe(nom, prenom, dateDeces, hashActe) {
     const dateDecesTimestamp = Date.parse(dateDeces) / 1000;
-    await contract.methods.ajouterActe(nom, prenom, dateDecesTimestamp).send({ from: accounts[0] });
+    await contract.methods.ajouterActe(nom, prenom, dateDecesTimestamp, hashActe).send({ from: accounts[0] });
     const nombreActes = await contract.methods.nombreActes().call();
     const actes = await Promise.all(
       Array(Number(nombreActes))
-          .fill()
-          .map((_, index) => contract.methods.getActe(index).call())
+        .fill()
+        .map((_, index) => contract.methods.getActe(index).call())
     );
     setActes(actes);
     setNombreActes(nombreActes);
   }
 
-  // Soumet le formulaire pour ajouter un nouvel acte de décès
   function handleSubmit(event) {
     event.preventDefault();
-    ajouterActe(nom, prenom, dateDeces);
+    ajouterActe(nom, prenom, dateDeces, hashActe);
     console.log(nombreActes);
   }
-
   return (
     <div>
       <h1>Acte de décès</h1>
@@ -82,6 +81,10 @@ function ActeDeDeces() {
         <label>
           Date de décès:
           <input type="date" value={dateDeces} onChange={e => setDateDeces(e.target.value)} />
+        </label>
+        <label>
+          Hash de l'acte de naissance:
+          <input type="text" value={hashActe} onChange={e => setHashActe(e.target.value)} />
         </label>
         <button type="submit">Enregistrer l'acte de décès</button>
       </form>

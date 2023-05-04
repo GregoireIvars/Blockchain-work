@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import "./ActeDeNaissances.sol";
+
 contract ActeDeDeces {
-    
     address owner;
     mapping (uint256 => Deces) public actes;
+    mapping (bytes32 => bool) public actesNaissance; // mapping pour stocker les actes de naissance existants
     uint256 public nombreActes;
 
     struct Deces {
@@ -26,7 +28,7 @@ contract ActeDeDeces {
         _;
     }
     
-    function ajouterActe(string memory _nom, string memory _prenom, uint256 _dateDeces) public onlyOwner {
+    function ajouterActe(string memory _nom, string memory _prenom, uint256 _dateDeces, bytes32 hashActe) public onlyOwner {
         require(_dateDeces > 0, "La date de deces doit etre valide");
         uint256 dateEnregistrement = block.timestamp;
         actes[nombreActes] = Deces(_nom, _prenom, _dateDeces, dateEnregistrement);

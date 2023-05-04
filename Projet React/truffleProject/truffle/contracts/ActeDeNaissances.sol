@@ -1,37 +1,146 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.18;
+pragma solidity ^0.8.0;
 
 contract ActeDeNaissances {
+    address owner;
+    mapping(uint256 => Naissances) public actes;
+    uint256 public nombreNaissance;
+    bytes32 public hashe;
 
-    struct Naissance {
-        string prenom;
+    struct Naissances {
         string nom;
-        string perePrenom;
+        string prenom;
         string pereNom;
-        string merePrenom;
+        string perePrenom;
         string mereNom;
-        string villeNaissance;
+        string merePrenom;
+        uint256 dateNaissances;
+        uint256 dateEnregistrement;
+        bytes32 hashe;
+    }
+    event ActeAjoute(
+        string nom,
+        string prenom,
+        string pereNom,
+        string perePrenom,
+        string mereNom,
+        string merePrenom,
+        uint256 dateNaissances,
+        uint256 dateEnregistrement
+    );
+
+    constructor() {
+        owner = msg.sender;
+        nombreNaissance = 0;
     }
 
-    mapping (address => Naissance) naissances;
-    Naissance[] public transactions;
-    event NaissanceEnregistree(address indexed utilisateur, string prenom, string nom, string perePrenom, string pereNom, string merePrenom, string mereNom, string villeNaissance);
-
-    function obtenirNaissance() public view returns (string memory prenom, string memory nom, string memory perePrenom, string memory pereNom, string memory merePrenom, string memory mereNom, string memory villeNaissance) {
-
-        Naissance memory naissance = naissances[msg.sender];
-
-        return (naissance.prenom, naissance.nom, naissance.perePrenom, naissance.pereNom, naissance.merePrenom, naissance.mereNom, naissance.villeNaissance);
+    modifier onlyOwner() {
+        require(
+            msg.sender == owner,
+            "Seul le proprietaire du contrat peut effectuer cette action"
+        );
+        _;
     }
 
-    function enregistrerNaissance(string memory prenom, string memory nom, string memory perePrenom, string memory pereNom, string memory merePrenom, string memory mereNom, string memory villeNaissance) public {
-        Naissance memory newTransaction = Naissance(prenom, nom, perePrenom, pereNom, merePrenom, mereNom, villeNaissance);
-        naissances[msg.sender] = newTransaction;
-        transactions.push(newTransaction);
-        emit NaissanceEnregistree(msg.sender, prenom, nom, perePrenom, pereNom, merePrenom, mereNom, villeNaissance);
+    function ajouterActeN(
+        string memory _nom,
+        string memory _prenom,
+        string memory _pereNom,
+        string memory _perePrenom,
+        string memory _mereNom,
+        string memory _merePrenom,
+        uint256 _dateNaissances
+    ) public onlyOwner {
+        require(_dateNaissances > 0, "La date de Naissances doit etre valide");
+        uint256 dateEnregistrement = block.timestamp;
+        bytes32 hashActe = keccak256(
+            abi.encodePacked(
+                _nom,
+                _prenom,
+                _pereNom,
+                _perePrenom,
+                _mereNom,
+                _merePrenom,
+                _dateNaissances,
+                dateEnregistrement
+            )
+        );
+        actes[nombreNaissance] = Naissances(
+            _nom,
+            _prenom,
+            _pereNom,
+            _perePrenom,
+            _mereNom,
+            _merePrenom,
+            _dateNaissances,
+            dateEnregistrement,
+            hashActe
+        );
+        nombreNaissance++;
+        hashe = hashActe;
+        emit ActeAjoute(
+            _nom,
+            _prenom,
+            _pereNom,
+            _perePrenom,
+            _mereNom,
+            _merePrenom,
+            _dateNaissances,
+            dateEnregistrement
+        );
     }
 
-    function obtenirTransactions() public view returns (Naissance[] memory) {
-        return transactions;
+   function getHash(uint256 _numeroNaissances) public view returns (bytes32) {
+    require(
+        _numeroNaissances < nombreNaissance,
+        "L'acte demande n'existe pas"
+    );
+    Naissances memory naissances = actes[_numeroNaissances];
+    bytes32 hashActe = keccak256(
+        abi.encodePacked(
+            naissances.nom,
+            naissances.prenom,
+            naissances.pereNom,
+            naissances.perePrenom,
+            naissances.mereNom,
+            naissances.merePrenom,
+            naissances.dateNaissances,
+            naissances.dateEnregistrement
+        )
+    );
+    return hashActe;
+}
+
+    function getActe(
+        uint256 _numeroNaissances
+    )
+        public
+        view
+        returns (
+            string memory nom,
+            string memory prenom,
+            string memory pereNom,
+            string memory perePrenom,
+            string memory mereNom,
+            string memory merePrenom,
+            uint256 dateNaissances,
+            uint256 dateEnregistrement
+        )
+    {
+        {
+            require(
+                _numeroNaissances < nombreNaissance,
+                "L acte demande n existe pas"
+            );
+            Naissances memory naissances = actes[_numeroNaissances];
+            nom = naissances.nom;
+            prenom = naissances.prenom;
+            pereNom = naissances.pereNom;
+            perePrenom = naissances.perePrenom;
+            mereNom = naissances.mereNom;
+            merePrenom = naissances.merePrenom;
+            dateNaissances = naissances.dateNaissances;
+            dateEnregistrement = naissances.dateEnregistrement;
+        }
     }
 }
