@@ -66,27 +66,46 @@ function ActeDeDeces() {
     ajouterActe(nom, prenom, dateDeces, hashActe);
     console.log(nombreActes);
   }
+  async function displayActe() {
+    const actes = await Promise.all(
+      Array(Number(nombreActes))
+        .fill()
+        .map((_, index) => contract.methods.getActe(index).call())
+    );
+    setActes(actes);
+  }
+  
+  function handleDisplay(event) {
+    event.preventDefault();
+    displayActe();
+  }
+  
   return (
-    <div>
+    <>
       <h1>Acte de décès</h1>
       <form onSubmit={handleSubmit}>
         <label>
-          Nom:
+          <p>Nom:</p>
           <input type="text" value={nom} onChange={e => setNom(e.target.value)} />
         </label>
         <label>
-          Prénom:
+          <p>Prénom:</p>
           <input type="text" value={prenom} onChange={e => setPrenom(e.target.value)} />
         </label>
         <label>
-          Date de décès:
+          <p>Date de décès:</p>
           <input type="date" value={dateDeces} onChange={e => setDateDeces(e.target.value)} />
         </label>
         <label>
-          Hash de l'acte de naissance:
+         <p>Hash de l'acte de naissance:</p> 
           <input type="text" value={hashActe} onChange={e => setHashActe(e.target.value)} />
         </label>
         <button type="submit">Enregistrer l'acte de décès</button>
+      </form>
+      <br/>
+      <br/>
+      <form onSubmit={handleDisplay}>
+      <button type="submit">Afficher les actes de décès</button>
       </form>
       {actes.length > 0 && (
         <div>
@@ -103,7 +122,7 @@ function ActeDeDeces() {
           </ul>
         </div>
       )}
-    </div>
+    </>
   );
 }
 export default ActeDeDeces;

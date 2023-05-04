@@ -143,4 +143,10 @@ contract ActeDeNaissances {
             dateEnregistrement = naissances.dateEnregistrement;
         }
     }
+     function displayAllActes() public view returns (Naissances[] memory) {
+    Naissances[] memory actesNaissances = new Naissances[](nombreNaissance);
+    for (uint i = 0; i < nombreNaissance; i++) {
+        actesNaissances[i] = actes[i];
+    }
+}
 }

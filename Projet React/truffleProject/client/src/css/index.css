@@ -10,11 +10,16 @@ div {
   h1 {
     font-size: 36px;
     margin-bottom: 20px;
+    text-align: center;
   }
   
   form label {
     display: block;
     margin-bottom: 10px;
+  }
+  label p {
+    font-size: 16px;
+    font-weight: bold;
   }
   
   form input[type="text"],
@@ -23,7 +28,7 @@ div {
     border-radius: 5px;
     border: 1px solid #ddd;
     font-size: 16px;
-    width: 100%;
+    width: 95%;
     margin-bottom: 20px;
   }
   
@@ -35,6 +40,7 @@ div {
     border-radius: 5px;
     font-size: 16px;
     cursor: pointer;
+    
   }
   
   ul {

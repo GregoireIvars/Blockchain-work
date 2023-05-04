@@ -44,5 +44,13 @@ contract ActeDeDeces {
         dateDeces = deces.dateDeces;
         dateEnregistrement = deces.dateEnregistrement;
     }
+
+   function displayAllActes() public view returns (Deces[] memory) {
+    Deces[] memory actesDeces = new Deces[](nombreActes);
+    for (uint i = 0; i < nombreActes; i++) {
+        actesDeces[i] = actes[i];
+    }
+    return actesDeces;
+}
     
 }

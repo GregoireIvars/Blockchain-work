@@ -73,41 +73,59 @@ function ActeDeNaissances() {
     ajouterActeN(nom, prenom, pereNom, perePrenom, mereNom, merePrenom, dateNaissances);
     console.log(nombreNaissance);
   }
+  async function displayActe() {
+    const actes = await Promise.all(
+      Array(Number(nombreNaissance))
+        .fill()
+        .map((_, index) => contract.methods.getActe(index).call())
+    );
+    setActes(actes);
+  }
+  
+  function handleDisplay(event) {
+    event.preventDefault();
+    displayActe();
+  }
 
   return (
-    <div>
+    <>
       <h1>Acte de naissances</h1>
       <form onSubmit={handleSubmit}>
         <label>
-          Nom:
+          <p>Nom:</p>
           <input type="text" value={nom} onChange={e => setNom(e.target.value)} />
         </label>
         <label>
-          Prénom:
+        <p>Prénom:</p>
           <input type="text" value={prenom} onChange={e => setPrenom(e.target.value)} />
         </label>
         <label>
-          Père Nom:
+        <p>Père Nom:</p> 
           <input type="text" value={perePrenom} onChange={e => setPerePrenom(e.target.value)} />
         </label>
         <label>
-          Père Prénom:
+        <p>Père Prénom:</p> 
           <input type="text" value={pereNom} onChange={e => setPereNom(e.target.value)} />
         </label>
         <label>
-          Mère Nom:
+        <p>Mère Nom:</p> 
           <input type="text" value={merePrenom} onChange={e => setMerePrenom(e.target.value)} />
         </label>
         <label>
-          Mère Prénom:
+        <p>Mère Prénom:</p>
           <input type="text" value={mereNom} onChange={e => setMereNom(e.target.value)} />
         </label>
         <label>
-          Date de Naissance:
+        <p>Date de Naissance:</p> 
           <input type="date" value={dateNaissances} onChange={e => setdateNaissances(e.target.value)} />
         </label>
         <button type="submit">Enregistrer l'acte de naissances</button>
+        <br/>
+        <br/>
       </form>
+      <form onSubmit={handleDisplay}>
+        <button type="submit">Afficher les actes de naissances</button>
+        </form>
       {actes.length > 0 && (
         <div>
           <h2>Liste des actes de Naissances enregistrés:</h2>
@@ -132,7 +150,7 @@ function ActeDeNaissances() {
           </ul>
         </div>
       )}
-    </div>
+    </>
   );
 }
 export default ActeDeNaissances;
